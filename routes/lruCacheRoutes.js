@@ -56,7 +56,7 @@ router.get('/marsCoords/latitude/:latitude/longitude/:longitude', function (req,
 });
 
 // Delete listing
-router.delete('/', function(req, res, next) {
+router.delete('/cache', function(req, res, next) {
   let result = lruCache.lruCacheClear();
   if (result) {
     res.status(200).send(result);

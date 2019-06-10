@@ -70,8 +70,9 @@ function lruCache(latitude, longitude) {
             
             lruCacheHit++;
             timeTarget = 'hit';
+            // reset the timer and order so we don't drop this from cache
             this.pop(key);
-            this.push(key, url);
+            this.push(key, url); 
         }
         else {
             if(this.sizeCheck()) {
