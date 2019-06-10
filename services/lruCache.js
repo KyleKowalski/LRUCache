@@ -19,19 +19,19 @@ If it is a hit - pop the old, push the new, timestamp updated
 If it is not a hit - push the new, timestamp updated
 
 */
-lruCache(-10,10);
-lruCache(-99,99);
-lruCache(-10,10);
-lruCache(-10,10);
-lruCache(1,1);
-lruCache(1,2);
-lruCache(1,3);
-lruCache(1,4);
-lruCache(1,2);
-lruCache(1,5);
-lruCache(1,6);
-lruCache(1,7);
-lruCache(1,8);
+// lruCache(-10,10);
+// lruCache(-99,99);
+// lruCache(-10,10);
+// lruCache(-10,10);
+// lruCache(1,1);
+// lruCache(1,2);
+// lruCache(1,3);
+// lruCache(1,4);
+// lruCache(1,2);
+// lruCache(1,5);
+// lruCache(1,6);
+// lruCache(1,7);
+// lruCache(1,8);
 
 function lruCache(latitude, longitude) {
     this.get = function(latitude,longitude) {
@@ -39,6 +39,9 @@ function lruCache(latitude, longitude) {
         console.log(`Changed to key: ${key}`);
         if (theCacheItself.has(key)) {
             console.log(`Cool a cache hit!`);
+            let url = theCacheItself.get(key)[0]; // grab the url to re-use it
+            console.log(`Re-using url: ${url}`);
+            
             if(this.sizeCheck()) {
                 lruCacheHitFull++;
             }
@@ -46,8 +49,7 @@ function lruCache(latitude, longitude) {
                 lruCacheHitNotFull++;
             }
             this.pop(key);
-            this.push(key);
-            return 0;
+            this.push(key, url);
         }
         else {
             console.log(`Cache miss - adding key ${key}`);
@@ -58,12 +60,18 @@ function lruCache(latitude, longitude) {
                 lruCacheMissNotFull++;
             }
             this.push(key);
-            return 0;
         }
-        
+        return theCacheItself.get(key)[0];
     },
-    this.push = function(key) {
-        theCacheItself.set(key,[this.getImageURL(), this.getDate()]);
+    this.push = function(key, url) {
+        if (url == null) {
+            url = this.getImageURL()
+        }
+        else {
+            console.log(`url was re-used.... ${url}... it's a cache...`);
+            // TODO some sort of age timeout?  
+        }
+        theCacheItself.set(key,[url, this.getDate()]);
         console.log(theCacheItself);
         return 0;
     },
@@ -105,9 +113,9 @@ function lruCache(latitude, longitude) {
         return currentDate;
     }
 
-    this.get(latitude,longitude);
+    let returnValue = this.get(latitude,longitude);
 
-    return;
+    return returnValue;
 }
 
 module.exports = {

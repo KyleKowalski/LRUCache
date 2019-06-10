@@ -41,8 +41,7 @@ router.get('/marsCoords/latitude/:latitude/longitude/:longitude', function (req,
   // if both validate, start doing what we're here for (get the url)
   if (!(error.latitude || error.longitude)) {
     // call for the item from the cache
-    let result = lruCache.getLRUCache(latitude, longitude);
-    // let result = `Received Lat/Long of: ${latitude}/${longitude}`;
+    let result = lruCache.lruCache(latitude, longitude);
     res.status(200).json(result);
   }
   else {
@@ -52,7 +51,7 @@ router.get('/marsCoords/latitude/:latitude/longitude/:longitude', function (req,
 
 // Delete listing
 router.delete('/', function(req, res, next) {
-  res.status(200).send('annnd we are nuking the cache, cool');
+  res.status(200).send(result);
 });
 
 module.exports = router;
