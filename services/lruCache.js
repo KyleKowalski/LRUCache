@@ -16,22 +16,6 @@ If it is a hit - pop the old, push the new, timestamp updated
 If it is not a hit - push the new, timestamp updated
 */
 
-lruCache(-10,10);
-lruCache(-99,99);
-lruCache(-10,10);
-lruCache(-10,10);
-lruCache(1,1);
-lruCache(1,2);
-lruCache(1,3);
-lruCache(1,4);
-lruCache(1,2);
-lruCache(1,5);
-lruCache(1,6);
-lruCache(1,7);
-lruCache(1,8);
-
-lruCacheStats();
-
 function lruCacheStats() {
     this.getAvg = function(thingToAvg) {
         let sumAvg = 0;
@@ -75,7 +59,9 @@ function lruCache(latitude, longitude) {
     
     this.get = function(latitude,longitude) {
         // timer, target and key are reset on every get
-        let timer0 = new Date().getTime();
+        // an interesting timer functionality in node
+        //https://leapforwards.wordpress.com/2015/09/20/how-to-measure-execution-time-in-node-js-javascript/
+        let hrTime0 = process.hrtime(); 
         let timeTarget = null;
         let key = latitude+'/'+longitude
 
@@ -99,23 +85,21 @@ function lruCache(latitude, longitude) {
             this.push(key);
         }
 
-        let timer1 = new Date().getTime();
-        let totalTime = timer1 - timer0;
+        const totalTime = process.hrtime(hrTime0);
+        let timeInMs = (totalTime[0] + totalTime[1]/1000000);
         if (timeTarget === 'hit') {
-            lruCacheHitTime.push(totalTime);
+            lruCacheHitTime.push(timeInMs);
         }
         else if (timeTarget === 'missFull') {
-            lruCacheMissFullTime.push(totalTime);
+            lruCacheMissFullTime.push(timeInMs);
         }
         else if (timeTarget === 'missNotFull') {
-            lruCacheMissNotFullTime.push(totalTime);
+            lruCacheMissNotFullTime.push(timeInMs);
         }
         else (
             console.log('Error in our timer')
         )
-        // console.log(`Time Start: ${timer0} and end: ${timer1}`);
-        console.log('Execution time: %dms', totalTime);
-        console.log(`Time target is: ${timeTarget}`);
+
         return theCacheItself.get(key)[0];
     },
     this.push = function(key, url) {
@@ -127,7 +111,6 @@ function lruCache(latitude, longitude) {
             // TODO some sort of age timeout?  
         }
         theCacheItself.set(key,[url, this.getDate()]);
-        // console.log(theCacheItself);
         return 0;
     },
     this.pop = function(key) {
@@ -167,7 +150,7 @@ function lruCache(latitude, longitude) {
 
 function lruCacheClear() {
     theCacheItself.clear();
-    return 0;
+    return 'cache cleared';
 }
 
 module.exports = {

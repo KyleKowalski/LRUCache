@@ -67,9 +67,9 @@ router.delete('/', function(req, res, next) {
 });
 
 router.delete('/stats', function(req, res, next) {
-  let result = lruCache.lruCacheStats.delete();
+  let result = lruCache.lruStatsClear();
   if (result) {
-    res.status(200).send('Stats cleared.');
+    res.status(200).send(result);
   }
   else {
     res.status(400).send('Unable to clear stats at this time')
