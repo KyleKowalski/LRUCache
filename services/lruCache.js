@@ -1,0 +1,1 @@
+console.log('utterly simple LRU cache load')
