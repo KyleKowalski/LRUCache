@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+let lruCache = require('../services/lruCache')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -40,8 +41,8 @@ router.get('/marsCoords/latitude/:latitude/longitude/:longitude', function (req,
   // if both validate, start doing what we're here for (get the url)
   if (!(error.latitude || error.longitude)) {
     // call for the item from the cache
-    // let result = lruCache(latitude, longitude);
-    let result = `Received Lat/Long of: ${latitude}/${longitude}`
+    let result = lruCache.getLRUCache(latitude, longitude);
+    // let result = `Received Lat/Long of: ${latitude}/${longitude}`;
     res.status(200).json(result);
   }
   else {
