@@ -1,53 +1,11 @@
 const LRUCACHESIZE = 3; // Test Size - will set properly later
-let lruCacheHitNotFull = 0;
-let lruCacheHitNotFullTime = [];
-let lruCacheHitFull = 0;
-let lruCacheHitFullTime = [];
+let lruCacheHit = 0;
+let lruCacheHitTime = [];
 let lruCacheMissNotFull = 0;
 let lruCacheMissNotFullTime = [];
 let lruCacheMissFull = 0;
 let lruCacheMissFullTime = [];
 let theCacheItself = new Map();
-
-function getLRUCacheStats() {
-    this.getAvg = function(thingToAvg) {
-        let sumAvg = 0;
-        let countAvg = 0;
-        thingToAvg.forEach((timeItem) => {
-            countAvg++;
-            sumAvg += timeItem;
-        });
-        let avg = sumAvg/countAvg;
-        return avg;
-    },
-    this.clearStats = function() {
-        lruCacheHitNotFull = 0;
-        lruCacheHitNotFullTime = [];
-        lruCacheHitFull = 0;
-        lruCacheHitFullTime = [];
-        lruCacheMissNotFull = 0;
-        lruCacheMissNotFullTime = [];
-        lruCacheMissFull = 0;
-        lruCacheMissFullTime = [];
-        
-        return 0;
-    }
-
-    let lruCacheStats = {
-        hitFull: lruCacheHitFull,
-        hitFullAvg: this.getAvg(lruCacheHitFullTime),
-        hitNotFull: lruCacheHitNotFull,
-        hitNotFullAvg: this.getAvg(lruCacheHitNotFullTime),
-        missFull: lruCacheMissFull,
-        missFullAvg: this.getAvg(lruCacheMissFullTime),
-        missNotFull: lruCacheMissNotFull,
-        missNotFullAvg: this.getAvg(lruCacheMissNotFullTime)
-    }
-    console.log(lruCacheStats);
-    return(lruCacheStats);
-}
-
-
 
 /* 
 What we need here...
@@ -59,23 +17,57 @@ If it is not a hit - push the new, timestamp updated
 
 */
 
-lruCache(1,1);
-lruCache(1,2);
-lruCache(1,3);
-lruCache(-10,10);
-// lruCache(-99,99);
-lruCache(-10,10);
-lruCache(-10,10);
-// lruCache(1,4);
+// lruCache(1,1);
 // lruCache(1,2);
-// lruCache(1,5);
-lruCache(1,6);
-lruCache(1,7);
-lruCache(1,8);
-lruCacheClear();
-lruCache(1,1);
+// lruCache(1,3);
+// lruCache(-10,10);
+// // lruCache(-99,99);
+// lruCache(-10,10);
+// lruCache(-10,10);
+// // lruCache(1,4);
+// // lruCache(1,2);
+// // lruCache(1,5);
+// lruCache(1,6);
+// lruCache(1,7);
+// lruCache(1,8);
+// lruCacheClear();
+// lruCache(1,1);
 
-getLRUCacheStats();
+// lruCacheStats();
+
+function lruCacheStats() {
+    this.getAvg = function(thingToAvg) {
+        let sumAvg = 0;
+        let countAvg = 0;
+        thingToAvg.forEach((timeItem) => {
+            countAvg++;
+            sumAvg += timeItem;
+        });
+        let avg = sumAvg/countAvg;
+        return avg;
+    },
+    this.clearStats = function() {
+        lruCacheHit = 0;
+        lruCacheHitTime = [];
+        lruCacheMissNotFull = 0;
+        lruCacheMissNotFullTime = [];
+        lruCacheMissFull = 0;
+        lruCacheMissFullTime = [];
+        
+        return 0;
+    }
+
+    let lruCacheStats = {
+        hit: lruCacheHit,
+        hitAvg: this.getAvg(lruCacheHitTime),
+        missFull: lruCacheMissFull,
+        missFullAvg: this.getAvg(lruCacheMissFullTime),
+        missNotFull: lruCacheMissNotFull,
+        missNotFullAvg: this.getAvg(lruCacheMissNotFullTime)
+    }
+    console.log(lruCacheStats);
+    return(lruCacheStats);
+}
 
 function lruCache(latitude, longitude) {
     this.get = function(latitude,longitude) {
@@ -86,12 +78,8 @@ function lruCache(latitude, longitude) {
             let url = theCacheItself.get(key)[0]; // grab the url to re-use it
             console.log(`Re-using url: ${url}`);
             
-            if(this.sizeCheck()) {
-                lruCacheHitFull++;
-            }
-            else {
-                lruCacheHitNotFull++;
-            }
+            lruCacheHit++;
+
             this.pop(key);
             this.push(key, url);
         }
@@ -163,7 +151,7 @@ function lruCacheClear() {
 }
 
 module.exports = {
-    getLRUCacheStats:getLRUCacheStats,
+    lruCacheStats:lruCacheStats,
     lruCache:lruCache,
     lruCacheClear:lruCacheClear
 }

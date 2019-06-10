@@ -8,7 +8,13 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/stats', function(req, res, next) {
-  res.status(200).send('here are our stats for the cache...');
+  let result = lruCache.lruCacheStats();
+  if (result) {
+    res.status(200).send(result);
+  }
+  else {
+    res.status(400).send('Unable to retreive stats at this time');
+  }
 });
 
 router.get('/marsCoords/latitude/:latitude/longitude/:longitude', function (req, res) {
@@ -45,13 +51,29 @@ router.get('/marsCoords/latitude/:latitude/longitude/:longitude', function (req,
     res.status(200).json(result);
   }
   else {
-    res.status(400).json(error);
+    res.status(400).send(error);
   }
 });
 
 // Delete listing
 router.delete('/', function(req, res, next) {
-  res.status(200).send(result);
+  let result = lruCache.lruCacheClear();
+  if (result) {
+    res.status(200).send(result);
+  }
+  else {
+    res.status(400).json('Unable to clear cache at this time');
+  }
+});
+
+router.delete('/stats', function(req, res, next) {
+  let result = lruCache.lruCacheStats.delete();
+  if (result) {
+    res.status(200).send('Stats cleared.');
+  }
+  else {
+    res.status(400).send('Unable to clear stats at this time')
+  }
 });
 
 module.exports = router;
