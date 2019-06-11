@@ -1,4 +1,4 @@
-const LRUCACHESIZE = 3; // Test Size - will set properly later
+const LRUCACHESIZE = 3000; // Prod size
 let lruCacheHit = 0;
 let lruCacheHitTime = [];
 let lruCacheMissNotFull = 0;
